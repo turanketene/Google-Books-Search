@@ -1,12 +1,16 @@
 const db = require("../models");
-const util = require('util');
+const axios = require('axios');
 
 // Defining methods for the booksController
 module.exports = {
+  searchApi: function(req, res) {
+    axios.get("https://www.googleapis.com/books/v1/volumes?q=flowers")
+    .then((response) => res.json(response.data))
+    .catch(err => res.status(422).json(err))
+  },
   findAll: function(req, res) {
     db.Book
       .find(req.query)
-      .sort({ date: -1 })
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
@@ -16,7 +20,7 @@ module.exports = {
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },
-  create: function(req, res) {
+  save: function(req, res) {
     db.Book
       .create(req.body)
       .then(dbModel => res.json(dbModel))
@@ -24,7 +28,7 @@ module.exports = {
   },
   update: function(req, res) {
     db.Book
-      .findOneAndUpdate({ _id: req.params.id }, req.body)
+      .findByIdAndUpdate({ _id: req.params.id }, req.body)
       .then(dbModel => res.json(dbModel))
       .catch(err => res.status(422).json(err));
   },

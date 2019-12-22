@@ -7,7 +7,7 @@ mongoose.set('useNewUrlParser', true);
 mongoose.set('useFindAndModify', false);
 mongoose.set('useCreateIndex', true);
 mongoose.set('useUnifiedTopology', true);
-// const routes = require("./routes");
+const apiRoutes = require("./routes/index");
 const PORT = process.env.PORT || 3001;
 // Middleware
 app.use(bodyParser.urlencoded({ extended: true }));
@@ -16,7 +16,12 @@ app.use(bodyParser.json());
 if (process.env.NODE_ENV === "production") {
     app.use(express.static("client/build"));
 }
-// app.use(routes);
+// Defining API routes
+app.use("/api", apiRoutes);
+app.get("*", (req, res) => {
+    res.sendFile(path.join(__dirname, "./client/build/index.html"));
+  });
+  
 mongoose.connect(process.env.MONGODB_URI || "mongodb://localhost/googlebooks");
 app.listen(PORT, function() {
     console.log(`🌎  ==> API Server now listening on PORT ${PORT}!`);
